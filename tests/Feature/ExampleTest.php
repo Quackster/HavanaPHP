@@ -25,7 +25,7 @@ class ExampleTest extends TestCase
         $response
             ->assertStatus(200)
             ->assertJsonPath('app', 'HavanaPHP')
-            ->assertJsonPath('templatePath', '/opt/git/Havana/tools/www-tpl/default')
+            ->assertJsonPath('templatePath', base_path('resources/legacy/www-tpl').'/default')
             ->assertJsonPath('housekeepingPath', 'allseeingeye/hk');
     }
 }

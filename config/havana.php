@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'base_path' => env('HAVANA_BASE_PATH', '/opt/git/Havana'),
-    'template_path' => env('HAVANA_TEMPLATE_PATH', env('HAVANA_BASE_PATH', '/opt/git/Havana').'/tools/www-tpl'),
+    'base_path' => env('HAVANA_BASE_PATH', base_path('resources/legacy')),
+    'template_path' => env('HAVANA_TEMPLATE_PATH', env('HAVANA_BASE_PATH', base_path('resources/legacy')).'/www-tpl'),
     'template_name' => env('HAVANA_TEMPLATE_NAME', 'default'),
     'locale_file' => env('HAVANA_LOCALE_FILE', 'locale-en.ini'),
-    'public_path' => env('HAVANA_PUBLIC_PATH', env('HAVANA_BASE_PATH', '/opt/git/Havana').'/tools/www'),
+    'public_path' => env('HAVANA_PUBLIC_PATH', public_path()),
     'housekeeping_path' => env('HAVANA_HOUSEKEEPING_PATH', 'allseeingeye/hk'),
     'rcon' => [
         'host' => env('HAVANA_RCON_HOST', '127.0.0.1'),

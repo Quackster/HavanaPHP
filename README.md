@@ -2,21 +2,23 @@
 
 Standalone Laravel port of `Havana-Web`.
 
-This app is designed to run beside the existing Havana checkout and database. It does not replace the Java Havana server, and it does not create a new Laravel schema for Havana tables.
+This app is designed to run with the existing Havana database. It does not replace the Java Havana game server, and it does not create a new Laravel schema for Havana tables.
 
 ## Repository Layout
 
 - `/opt/git/HavanaPHP`: Laravel/PHP port.
-- `/opt/git/Havana`: existing Havana checkout, used for templates, static assets, locale files, and legacy Java route parity references.
-- `/opt/git/Havana/tools/www-tpl`: legacy Twig-style templates.
-- `/opt/git/Havana/tools/www`: legacy public/static asset tree.
+- `resources/legacy/www-tpl`: committed legacy Twig-style templates and locale file.
+- `resources/legacy/figuredata/figuredata.xml`: committed 2009 Minerva-compatible figure data.
+- `public/web-gallery`, `public/housekeeping`, and `public/public`: committed legacy public/static asset tree.
+- `/opt/git/Havana`: optional legacy Java checkout, only needed for route parity audits.
+
+Legacy templates are committed under `resources/legacy/www-tpl`.
 
 ## Requirements
 
 - PHP `8.3` or newer.
 - Composer.
 - MariaDB or MySQL containing the existing Havana schema/data.
-- Existing `/opt/git/Havana` checkout.
 - PHP extensions:
   - `pdo_mysql`
   - `pdo_sqlite`
@@ -36,7 +38,7 @@ php composer.phar install
 php artisan key:generate
 ```
 
-Edit `.env` for the local Havana database and checkout paths:
+Edit `.env` for the local Havana database if needed. The legacy templates, static assets, locale file, and 2009 figuredata are committed in this repository, so the default paths normally do not need changing:
 
 ```dotenv
 DB_CONNECTION=mariadb
@@ -46,10 +48,10 @@ DB_DATABASE=havana
 DB_USERNAME=havana
 DB_PASSWORD=goldfish
 
-HAVANA_BASE_PATH=/opt/git/Havana
-HAVANA_TEMPLATE_PATH="${HAVANA_BASE_PATH}/tools/www-tpl"
+HAVANA_BASE_PATH=/opt/git/HavanaPHP/resources/legacy
+HAVANA_TEMPLATE_PATH="${HAVANA_BASE_PATH}/www-tpl"
 HAVANA_TEMPLATE_NAME=default
-HAVANA_PUBLIC_PATH="${HAVANA_BASE_PATH}/tools/www"
+HAVANA_PUBLIC_PATH=/opt/git/HavanaPHP/public
 HAVANA_HOUSEKEEPING_PATH=allseeingeye/hk
 ```
 
@@ -57,7 +59,7 @@ Do not run Laravel migrations against the live Havana database. HavanaPHP uses t
 
 ## Minerva Imaging
 
-HavanaPHP proxies `/habbo-imaging/*` requests to Minerva when the legacy site setting `site.imaging.endpoint` is present. Missing settings are inserted automatically with these defaults:
+HavanaPHP proxies `/habbo-imaging/*` requests to Minerva when the legacy site setting `site.imaging.endpoint` is present. The repository includes the 2009 `figuredata.xml` at `resources/legacy/figuredata/figuredata.xml`; use that same file for Minerva when matching the bundled legacy web assets. Missing imaging settings are inserted automatically with these defaults:
 
 ```text
 site.imaging.endpoint=http://localhost:5000
@@ -72,6 +74,7 @@ cd /opt/git/Minerva
 curl -L -o Minerva-linux-x64.zip https://github.com/Quackster/Minerva/releases/download/latest/Minerva-linux-x64.zip
 unzip Minerva-linux-x64.zip
 chmod +x ./Minerva
+cp /opt/git/HavanaPHP/resources/legacy/figuredata/figuredata.xml ./figuredata/figuredata.xml
 ./Minerva
 ```
 
@@ -96,8 +99,6 @@ cd /var/www/html
 cp public/index.php index.php
 cp public/.htaccess .htaccess
 perl -0pi -e "s#__DIR__.'/../storage#__DIR__.'/storage#g; s#__DIR__.'/../vendor#__DIR__.'/vendor#g; s#__DIR__.'/../bootstrap#__DIR__.'/bootstrap#g" index.php
-ln -sfn /opt/git/Havana/tools/www/web-gallery /var/www/html/web-gallery
-ln -sfn /opt/git/Havana/tools/www/housekeeping /var/www/html/housekeeping
 ```
 
 Set `.env` for the existing Havana database, for example:
@@ -110,9 +111,9 @@ DB_DATABASE=havana
 DB_USERNAME=root
 DB_PASSWORD=verysecret
 
-HAVANA_BASE_PATH=/opt/git/Havana
-HAVANA_TEMPLATE_PATH=/opt/git/Havana/tools/www-tpl
-HAVANA_PUBLIC_PATH=/opt/git/Havana/tools/www
+HAVANA_BASE_PATH=/var/www/html/resources/legacy
+HAVANA_TEMPLATE_PATH=/var/www/html/resources/legacy/www-tpl
+HAVANA_PUBLIC_PATH=/var/www/html/public
 ```
 
 Then initialize Laravel runtime state:

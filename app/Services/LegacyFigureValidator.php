@@ -142,6 +142,7 @@ class LegacyFigureValidator
     {
         $base = (string) config('havana.base_path');
         $candidates = [
+            $base.'/figuredata/figuredata.xml',
             $base.'/figuredata.xml',
             $base.'/tools/figuredata.xml',
         ];
